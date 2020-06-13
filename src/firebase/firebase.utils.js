@@ -41,6 +41,37 @@ export const createUserProfileDocument=async (userAuth,additionalData) => {
     return userRef;
 
 };
+//making new collection named"collections" in our firebase 
+export const addCollectionAndDocuments=async(collectionKey,objectsToAdd)=> {
+    const collectionRef=firestore.collection(collectionKey);
+console.log(collectionRef);
+    const batch=firestore.batch();
+    objectsToAdd.forEach(obj=>{
+        const newDocRef=collectionRef.doc();
+        batch.set(newDocRef,obj);
+
+    });
+ return await batch.commit()
+};
+//getting snapshot in the form we want it to be
+ export const convertCollectionsSnapshotToMap=(collections)=> {
+        const transformedCollection=collections.docs.map(doc=>{
+            const{title,items}=doc.data();
+            return {
+                //this encode uri converts the given argument in to the possible route name
+
+                routeName:encodeURI(title.toLowerCase()),
+                id:doc.id,
+                title,
+                items
+            };
+        });
+        //giving keyname to the particular objects...like hats,jackets etc;
+       return transformedCollection.reduce((accumulator,collection)=> {
+           accumulator[collection.title.toLowerCase()]=collection;
+           return accumulator;
+       }, {});
+};
 
 firebase.initializeApp(config);
 
