@@ -35,7 +35,6 @@ app.post('/payment', (req, res) => {
     amount: req.body.amount,
     currency: 'inr',
   };
-  console.log("BODY-->>",body);
   
 
   stripe.charges.create(body).then((stripeRes)=>{
